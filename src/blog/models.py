@@ -7,7 +7,6 @@ def user_directory_path(instance,filename):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    
     class Meta:
         verbose_name_plural = "Categories"
     
@@ -18,7 +17,8 @@ class Category(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    image = models.ImageField(upload_to=user_directory_path,default='default.jpg')
+    # image = models.ImageField(upload_to=user_directory_path,default='default.jpg')
+    image = models.TextField()
     category = models.ForeignKey(Category,on_delete=models.PROTECT)
     publish_date = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -37,7 +37,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.user.username
-        
+
 class Like(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     post = models.ForeignKey(Post,on_delete=CASCADE)
