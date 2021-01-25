@@ -28,20 +28,30 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    # def comment_count(self):
+    #     return self.comment_set.all().count()
+
+    # def view_count(self):
+    #     return self.postview_set.all().count()
+    
+    # def like_count(self):
+    #     return self.like_set.all().count()
+    
+    # def comments(self):
+    #     return self.comment_set.all()
+
 class Comment(models.Model):
     #if user is deleted, comment will be deleted
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     post = models.ForeignKey(Post,on_delete=CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
-
     def __str__(self):
         return self.user.username
 
 class Like(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     post = models.ForeignKey(Post,on_delete=CASCADE)
-
     def __str__(self):
         return self.user.username
 
@@ -50,4 +60,4 @@ class PostView(models.Model):
     post = models.ForeignKey(Post,on_delete=CASCADE)
     time_stamp = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return self.user.username
+        return self.user.username 

@@ -19,15 +19,7 @@ class Migration(migrations.Migration):
             name='image',
             field=models.ImageField(default='default.jpg', upload_to=blog.models.user_directory_path),
         ),
-        migrations.CreateModel(
-            name='PostView',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('time_stamp', models.DateTimeField(auto_now_add=True)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='blog.post')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
+        
         migrations.CreateModel(
             name='Like',
             fields=[
