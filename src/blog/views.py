@@ -6,6 +6,7 @@ from .serializers import CommentSerializer, PostSerializer, LikeSerializer,PostV
 from rest_framework import status
 
 #post
+
 @api_view(["GET","POST"])
 def post_list_create(request):
     if request.method == "GET":
@@ -34,6 +35,8 @@ def post_update_delete(request,post_id):
         
     if request.method == "PUT":
         serializer = PostSerializer(post,data=request.data)
+        if request.user.id != post.author.id:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         if serializer.is_valid():
             serializer.save()
             data={
@@ -43,6 +46,8 @@ def post_update_delete(request,post_id):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == "DELETE":
+        if request.user.id != post.author.id:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         post.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
