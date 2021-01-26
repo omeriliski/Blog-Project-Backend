@@ -4,15 +4,19 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import CommentSerializer, PostSerializer, LikeSerializer,PostViewSerializer
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 
 #post
-
 @api_view(["GET","POST"])
 def post_list_create(request):
     if request.method == "GET":
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 1
         posts = Post.objects.all()
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        result_page = paginator.paginate_queryset(posts, request)
+        serializer = PostSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     elif request.method == "POST":
         serializer = PostSerializer(data=request.data)
