@@ -1,18 +1,20 @@
 from django.shortcuts import get_object_or_404
 from .models import Like, Post,Comment,PostView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from .serializers import CommentSerializer, PostSerializer, LikeSerializer,PostViewSerializer
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 #post
 @api_view(["GET","POST"])
+@permission_classes((IsAuthenticated, ))
 def post_list_create(request):
     if request.method == "GET":
-
         paginator = PageNumberPagination()
-        paginator.page_size = 1
+        # number of posts on a page
+        paginator.page_size = 2
         posts = Post.objects.all()
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True)
