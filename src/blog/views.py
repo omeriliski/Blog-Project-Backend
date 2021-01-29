@@ -8,9 +8,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated,AllowAny
 
 #post
-@api_view(["GET","POST"])
-@permission_classes((IsAuthenticated, ))
-def post_list_create(request):
+@api_view(["GET",])
+def get_posts(request):
     if request.method == "GET":
         paginator = PageNumberPagination()
         # number of posts on a page
@@ -20,7 +19,11 @@ def post_list_create(request):
         serializer = PostSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
 
-    elif request.method == "POST":
+#for permission
+@api_view(["POST"])
+@permission_classes((IsAuthenticated, ))
+def create_post(request):
+    if request.method == "POST":
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -30,15 +33,18 @@ def post_list_create(request):
             return Response(data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["GET","PUT","DELETE"])
-def post_update_delete(request,post_id):
+@api_view(["GET",])
+def get_post(request,post_id): 
     post = get_object_or_404(Post,id=post_id)
-
     # can be used for details
     if request.method == "GET":
         serializer =  PostSerializer(post)
         return Response(serializer.data)
-        
+
+@api_view(["PUT","DELETE"])
+@permission_classes((IsAuthenticated, ))
+def update_delete_post(request,post_id): 
+    post = get_object_or_404(Post,id=post_id)     
     if request.method == "PUT":
         serializer = PostSerializer(post,data=request.data)
         if request.user.id != post.author.id:
@@ -58,14 +64,17 @@ def post_update_delete(request,post_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # comment
-@api_view(["GET","POST"])
-def comment_list_create(request,post_id):
+@api_view(["GET"])
+def get_comments(request,post_id):
     if request.method == "GET":
         comment = Comment.objects.filter(post=post_id)
         serializer = CommentSerializer(comment, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+@api_view(["POST"])
+@permission_classes((IsAuthenticated, ))
+def create_comment(request,post_id):
+    if request.method == "POST":
         post = get_object_or_404(Post,id=post_id)
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -77,13 +86,16 @@ def comment_list_create(request,post_id):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 # like
-@api_view(["GET","POST","DELETE"])
-def like_list_create_delete(request,post_id):
+@api_view(["GET"])
+def get_likes(request,post_id):
     if request.method == "GET":
         like_count = Like.objects.filter(post=post_id).count()
         return Response(like_count)
 
-    elif request.method == "POST":
+@api_view(["POST","DELETE"])
+@permission_classes((IsAuthenticated, ))
+def create_delete_like(request,post_id):
+    if request.method == "POST":
         post = get_object_or_404(Post,id=post_id)
         serializer = LikeSerializer(data=request.data)
         if serializer.is_valid():
@@ -99,13 +111,16 @@ def like_list_create_delete(request,post_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # postview
-@api_view(["GET","POST","DELETE"])
-def postview_list_create(request,post_id):
+@api_view(["GET"])
+def get_postviews(request,post_id):
     if request.method == "GET":
         postview_count = PostView.objects.filter(post=post_id).count()
         return Response(postview_count)
 
-    elif request.method == "POST":
+@api_view(["POST"])
+@permission_classes((IsAuthenticated, ))
+def create_postview(request,post_id):
+    if request.method == "POST":
         post = get_object_or_404(Post,id=post_id)
         serializer = PostViewSerializer(data=request.data)
         if serializer.is_valid():
