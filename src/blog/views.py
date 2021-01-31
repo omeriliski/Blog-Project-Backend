@@ -13,7 +13,7 @@ def get_posts(request):
     if request.method == "GET":
         paginator = PageNumberPagination()
         # number of posts on a page
-        paginator.page_size = 2
+        paginator.page_size = 10
         posts = Post.objects.all()
         result_page = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(result_page, many=True)
